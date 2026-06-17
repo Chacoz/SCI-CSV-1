@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "prisma generate && prisma db push --skip-generate && node prisma/seed.mjs && next build"
+  "buildCommand": "prisma generate && if [ -n \"$DATABASE_URL\" ]; then prisma db push --skip-generate && node prisma/seed.mjs; fi && next build"
 }
