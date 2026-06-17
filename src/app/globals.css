@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Palette chaleureuse "colocation" — modifiable ici */
+@theme {
+  --color-cream: #faf8f4;
+  --color-card: #ffffff;
+  --color-ink: #20302a;
+  --color-forest: #2e5e4e;
+  --color-forest-dark: #1f3f34;
+  --color-ochre: #d98e5a;
+  --color-ochre-dark: #b9703f;
+  --color-muted: #6b7c74;
+  --color-line: #e7e1d6;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Placeholder photo — dégradé doux quand aucune image n'est fournie */
+.photo-placeholder {
+  background-image: linear-gradient(135deg, #d7e3dc 0%, #eadfce 100%);
+}

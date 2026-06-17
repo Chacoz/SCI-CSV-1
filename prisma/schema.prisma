@@ -1,0 +1,59 @@
+// Schéma de la base — gestion locative de la colocation (Lille)
+// Doc Prisma : https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Une chambre du bien (6 au total)
+model Room {
+  id          String   @id @default(cuid())
+  name        String // ex. "Chambre 1"
+  description String? // descriptif pour la vitrine
+  surface     Float? // surface en m²
+  rent        Float // loyer mensuel hors charges (HC), en euros
+  charges     Float    @default(0) // provision mensuelle de charges, en euros (s'ajoute au loyer HC)
+  photoUrl    String? // chemin/URL de la photo principale
+  available   Boolean  @default(false) // affichée comme disponible sur la vitrine
+  order       Int      @default(0) // ordre d'affichage
+  tenants     Tenant[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Un locataire occupant une chambre
+model Tenant {
+  id          String    @id @default(cuid())
+  fullName    String
+  email       String?
+  phone       String?
+  roomId      String?
+  room        Room?     @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  moveInDate  DateTime?
+  moveOutDate DateTime? // null = locataire en cours
+  deposit     Float     @default(0) // dépôt de garantie versé, en euros
+  notes       String?
+  payments    Payment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Un loyer mensuel pour un locataire
+model Payment {
+  id         String    @id @default(cuid())
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  month      String // format "AAAA-MM", ex. "2026-06"
+  amountDue  Float // montant dû en euros (loyer HC + charges)
+  amountPaid Float     @default(0) // montant réglé en euros
+  paidDate   DateTime? // date de réception du paiement
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([tenantId, month])
+}
